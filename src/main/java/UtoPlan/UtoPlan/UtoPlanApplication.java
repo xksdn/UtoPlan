@@ -9,5 +9,4 @@ public class UtoPlanApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(UtoPlanApplication.class, args);
 	}
-
 }
