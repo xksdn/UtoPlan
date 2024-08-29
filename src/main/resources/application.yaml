@@ -11,7 +11,7 @@
 ##    driver-class-name: com.mysql.cj.jdbc.Driver
 #    username: root
 #    password: root1234
-
+#
 
 
 spring:
@@ -23,6 +23,6 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://192.168.55.101:3306/utoplanDB?useSSL=false&useUnicode=true&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://1.230.85.85:7623/utoplanDB?useSSL=false&useUnicode=true&allowPublicKeyRetrieval=true
     username: root
     password: root1234

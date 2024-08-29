@@ -17,8 +17,9 @@ import lombok.NoArgsConstructor;
 public class UserEntity {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long user_id;
     private String username;
-    private String password;
+    private String user_password;
+    private String email;
 }
