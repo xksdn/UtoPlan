@@ -1,11 +1,9 @@
 package UtoPlan.UtoPlan.DB;
 
+
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,14 +13,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-@Entity(name = "user")
-public class UserEntity {
+@Entity(name = "inquiry")  // 테이블 이름
+public class InquiryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
-    private String username;
-    private String user_password;
-    private String email;
+    private Long inquiryId;
+
+    @Column(name = "q_name")  // 'title'로 전송된 데이터 매핑
+    private String title;
+
+    @Column(name = "q_detail")  // 'content'로 전송된 데이터 매핑
+    private String content;
 }
+
+
