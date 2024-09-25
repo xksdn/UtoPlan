@@ -4,10 +4,8 @@ import UtoPlan.UtoPlan.DB.UserEntity;
 import UtoPlan.UtoPlan.DB.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,18 +23,26 @@ public class UserApiController {
 
 
 
-    @GetMapping("/name")
-    public void autoSave(
-            @RequestParam String name,
-            @RequestParam String password,
-            @RequestParam String email
-    ) {
-        var user = UserEntity.builder()
-                .username(name)
-                .user_password(password)
-                .email(email)
-                .build();
+//    @GetMapping("/name")
+//    public void autoSave(
+//            @RequestParam String name,
+//            @RequestParam String password,
+//            @RequestParam String email
+//    ) {
+//        var user = UserEntity.builder()
+//                .username(name)
+//                .user_password(password)
+//                .email(email)
+//                .build();
+//
+//        userRepository.save(user);
+//    }
 
-        userRepository.save(user);
+    @PostMapping("/save")
+    public ResponseEntity<String> saveUser(
+            @RequestBody UserEntity userEntity
+    ) {
+        userRepository.save(userEntity);
+        return ResponseEntity.ok("User data saved successfully");
     }
 }

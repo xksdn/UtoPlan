@@ -2,6 +2,7 @@ package UtoPlan.UtoPlan.controller;
 
 import UtoPlan.UtoPlan.DB.TripEntity;
 import UtoPlan.UtoPlan.DB.TripRepository;
+import UtoPlan.UtoPlan.openAPI.GooglePlacesAPI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,5 +23,14 @@ public class TripPlanApiController {
         log.info("Received Inquiry: {}", tripEntity);
         tripRepository.save(tripEntity);
         return ResponseEntity.ok("Trip data saved successfully");
+    }
+
+
+    @PostMapping("/response")
+    public ResponseEntity<String> getPlaces (
+            @RequestBody TripRepository tripRepository
+    ) {
+
+        return ResponseEntity.ok("");
     }
 }
