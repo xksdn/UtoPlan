@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public class GooglePlacesAPI {
 
-    private final String GoogleAPIKey = "AIzaSyDYNzaR_G6Yt5lrUguHzorMjPenHbHj6qM";
+    private final String GoogleAPIKey = "";
 
 
     public List<Place> searchPlaces(TripEntity tripEntity) throws JsonProcessingException {
@@ -26,7 +26,7 @@ public class GooglePlacesAPI {
         double[] latLng = getLatLngFromLocationName(placeName);
         double lat = latLng[0];
         double lng = latLng[1];
-        int radius = 5000; // 5km 반경
+        int radius = 10000; // 10km 반경
 
         String apiurl = String.format(
                 "https://maps.googleapis.com/maps/api/place/textsearch/json?query=%s&location=%f,%f&radius=%d&key=%s",
