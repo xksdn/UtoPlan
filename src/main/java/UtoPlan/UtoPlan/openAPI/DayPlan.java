@@ -17,6 +17,4 @@ import java.util.List;
 public class DayPlan {
     private int day;
     private List<Place> placeList;
-
-
 }

@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class GooglePlacesAPI {
 
-    private final String GoogleAPIKey = "APIKEY";
+    private final String GoogleAPIKey = "";
 
 
     public List<Place> searchPlaces(TripEntity tripEntity) throws JsonProcessingException {
@@ -74,7 +74,7 @@ public class GooglePlacesAPI {
             Place place = Place.builder()
                     .name(result.path("name").asText())
                     .lat(result.path("geometry").path("location").path("lat").asDouble())
-                    .lng(result.path("geometry").path("location").path("lat").asDouble())
+                    .lng(result.path("geometry").path("location").path("lng").asDouble())
                     .address(result.path("formatted_address").asText())
                     .rating(result.path("rating").asDouble())
                     .build();
