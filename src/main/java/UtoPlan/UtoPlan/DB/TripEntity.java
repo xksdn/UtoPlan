@@ -29,6 +29,7 @@ public class TripEntity {
     private UserEntity userId;
     private String tripName;
     private String tripPlace;
+    private String tripCity;
     private Integer adult;
     private Integer kid;
     private LocalDate startDate;
