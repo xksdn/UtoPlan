@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Service
 public class GooglePlacesAPI {
 
-    private final String GoogleAPIKey = "APIKEY";
+    private final String GoogleAPIKey = "";
 
 
     public List<Place> searchPlaces(TripEntity tripEntity) throws JsonProcessingException {
@@ -74,7 +75,7 @@ public class GooglePlacesAPI {
             Place place = Place.builder()
                     .name(result.path("name").asText())
                     .lat(result.path("geometry").path("location").path("lat").asDouble())
-                    .lng(result.path("geometry").path("location").path("lat").asDouble())
+                    .lng(result.path("geometry").path("location").path("lng").asDouble())
                     .address(result.path("formatted_address").asText())
                     .rating(result.path("rating").asDouble())
                     .build();

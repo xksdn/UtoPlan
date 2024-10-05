@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -15,8 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class DayPlan {
-    private int day;
+    private LocalDate day;
     private List<Place> placeList;
-
-
 }
