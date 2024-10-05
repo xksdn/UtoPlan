@@ -97,7 +97,7 @@ public class SignUpController {
                 .user_id(id)
                 .user_name(name)
                 .user_password(password)
-                .user_email(email)// 암호화 추가 가능
+                .email(email)// 암호화 추가 가능
                 .build();
 
         try {

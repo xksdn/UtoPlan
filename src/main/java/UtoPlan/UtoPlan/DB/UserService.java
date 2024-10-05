@@ -26,8 +26,36 @@ public class UserService {
         //return userRepository.findByUserId(user_id);
     //}
 
-    // num으로 조회
-    public Optional<UserEntity> getUserById(Long id) {
-        return userRepository.findById(id);
+    // num이 있는지 T or F
+    public Optional<UserEntity> getUserByNum(Long num) {
+        return userRepository.findById(num);
+    }
+
+    // email이 있는지 T or F
+    public Optional<UserEntity> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    // email로 찾아서 num 반환
+    public Long getUserNumByEmail(String email) {
+        Optional<UserEntity> userOptional = userRepository.findByEmail(email);
+
+        // 유저가 존재하면 num 반환, 그렇지 않으면 null 반환
+        return userOptional.map(UserEntity::getNum).orElse(null);
+
+    }
+
+
+    public boolean login(String email, String password) {
+        // 이메일로 사용자 검색
+        Optional<UserEntity> userOptional = userRepository.findByEmail(email);
+
+        // 사용자가 존재하고, 비밀번호가 일치하는지 확인
+        if (userOptional.isPresent()) {
+            UserEntity user = userOptional.get();
+            return user.getUser_password().equals(password); // 암호화를 사용하지 않는 경우
+        }
+
+        return false;
     }
 }
