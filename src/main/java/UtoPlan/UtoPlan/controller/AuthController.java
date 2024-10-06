@@ -1,19 +1,15 @@
 package UtoPlan.UtoPlan.controller;
 
-import UtoPlan.UtoPlan.DB.AuthService;
-import UtoPlan.UtoPlan.DB.UserEntity;
-import UtoPlan.UtoPlan.DB.UserService;
+import UtoPlan.UtoPlan.Model.AuthService;
+import UtoPlan.UtoPlan.Model.UserService;
 import UtoPlan.UtoPlan.Model.LoginRequest;
 import UtoPlan.UtoPlan.Model.LoginResponse;
-import UtoPlan.UtoPlan.util.JwtUtil;
+import UtoPlan.UtoPlan.CORS.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @CrossOrigin(origins = {"http://localhost:3000", "https://project-elfsyyodnvfuotllaw4b.framercanvas.com", "https://utoplan.framer.website/"}) // CORS 설정
@@ -31,7 +27,10 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest loginRequest, @RequestHeader(value = "Authorization", required = false) String authorization) {
+    public LoginResponse login(
+            @RequestBody LoginRequest loginRequest,
+            @RequestHeader(value = "Authorization", required = false) String authorization
+    ) {
         LoginResponse response = new LoginResponse();
 
         // Authorization 체크 (Basic 인증 방식 사용)

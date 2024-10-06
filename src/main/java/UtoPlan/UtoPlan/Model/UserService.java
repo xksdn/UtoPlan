@@ -1,5 +1,7 @@
-package UtoPlan.UtoPlan.DB;
+package UtoPlan.UtoPlan.Model;
 
+import UtoPlan.UtoPlan.DB.Entity.UserEntity;
+import UtoPlan.UtoPlan.DB.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

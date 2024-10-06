@@ -1,13 +1,9 @@
 package UtoPlan.UtoPlan.controller;
 
-import UtoPlan.UtoPlan.DB.InquiryEntity;
-import UtoPlan.UtoPlan.DB.InquiryRepository;
+import UtoPlan.UtoPlan.DB.Entity.InquiryEntity;
+import UtoPlan.UtoPlan.DB.Repository.InquiryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

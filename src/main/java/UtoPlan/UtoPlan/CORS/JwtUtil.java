@@ -1,4 +1,4 @@
-package UtoPlan.UtoPlan.util;
+package UtoPlan.UtoPlan.CORS;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

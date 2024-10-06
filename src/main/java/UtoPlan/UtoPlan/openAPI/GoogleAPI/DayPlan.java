@@ -1,4 +1,4 @@
-package UtoPlan.UtoPlan.openAPI;
+package UtoPlan.UtoPlan.openAPI.GoogleAPI;
 
 
 import lombok.AllArgsConstructor;

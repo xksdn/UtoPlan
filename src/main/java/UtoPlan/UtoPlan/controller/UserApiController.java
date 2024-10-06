@@ -1,9 +1,8 @@
 package UtoPlan.UtoPlan.controller;
 
-import UtoPlan.UtoPlan.DB.UserEntity;
-import UtoPlan.UtoPlan.DB.UserRepository;
+import UtoPlan.UtoPlan.DB.Entity.UserEntity;
+import UtoPlan.UtoPlan.DB.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

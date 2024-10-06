@@ -1,10 +1,9 @@
 package UtoPlan.UtoPlan.controller;
 
-import UtoPlan.UtoPlan.DB.TripEntity;
-import UtoPlan.UtoPlan.DB.TripRepository;
-import UtoPlan.UtoPlan.openAPI.DayPlan;
-import UtoPlan.UtoPlan.openAPI.GooglePlacesAPI;
-import UtoPlan.UtoPlan.openAPI.TripPlanLogic;
+import UtoPlan.UtoPlan.DB.Entity.TripEntity;
+import UtoPlan.UtoPlan.DB.Repository.TripRepository;
+import UtoPlan.UtoPlan.openAPI.GoogleAPI.DayPlan;
+import UtoPlan.UtoPlan.openAPI.GoogleAPI.TripPlanLogic;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,12 +39,25 @@ public class TripPlanApiController {
         return ResponseEntity.ok("");
     }
 
+//    @PostMapping("/plan")
+//    public ResponseEntity<List<DayPlan>> sendPlan (
+//            @RequestBody TripEntity tripEntity
+//    ) throws JsonProcessingException {
+//        log.info(" ", tripEntity);
+//        List<DayPlan> dayPlans = tripPlanLogic.tripLogic(tripEntity);
+//        return ResponseEntity.ok(dayPlans);
+//    }
+
     @PostMapping("/plan")
-    public ResponseEntity<List<DayPlan>> sendPlan (
-            @RequestBody TripEntity tripEntity
-    ) throws JsonProcessingException {
+    public ResponseEntity<List<DayPlan>> sendPlan () throws JsonProcessingException {
+        Long testUserId = 2001L;
+        TripEntity tripEntity = tripRepository.findById(testUserId)
+                        .orElseThrow(() -> new RuntimeException("Test user not found"));
+
         log.info(" ", tripEntity);
         List<DayPlan> dayPlans = tripPlanLogic.tripLogic(tripEntity);
         return ResponseEntity.ok(dayPlans);
     }
+
+
 }

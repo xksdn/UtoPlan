@@ -1,4 +1,4 @@
-package UtoPlan.UtoPlan.DB;
+package UtoPlan.UtoPlan.Model;
 
 import UtoPlan.UtoPlan.Model.LoginRequest;
 import UtoPlan.UtoPlan.Model.LoginResponse;

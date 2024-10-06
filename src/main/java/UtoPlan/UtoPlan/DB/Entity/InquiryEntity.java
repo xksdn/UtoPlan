@@ -1,4 +1,4 @@
-package UtoPlan.UtoPlan.DB;
+package UtoPlan.UtoPlan.DB.Entity;
 
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

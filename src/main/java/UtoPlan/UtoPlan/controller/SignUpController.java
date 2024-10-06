@@ -1,20 +1,17 @@
 package UtoPlan.UtoPlan.controller;
 
-import UtoPlan.UtoPlan.DB.UserEntity;
-import UtoPlan.UtoPlan.DB.UserRepository;
-import UtoPlan.UtoPlan.DB.UserService;
+import UtoPlan.UtoPlan.DB.Entity.UserEntity;
+import UtoPlan.UtoPlan.Model.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
 
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 @Slf4j
 @CrossOrigin(origins = {"http://localhost:3000", "https://project-elfsyyodnvfuotllaw4b.framercanvas.com"}) // CORS 설정
