@@ -17,7 +17,7 @@ import java.util.List;
 public class GooglePlacesAPI {
 
     // AIzaSyDYNzaR_G6Yt5lrUguHzorMjPenHbHj6qM
-    private final String GoogleAPIKey = "AIzaSyDYNzaR_G6Yt5lrUguHzorMjPenHbHj6qM";
+    private final String GoogleAPIKey = "";
 
 
     public List<Place> searchPlaces(TripEntity tripEntity) throws JsonProcessingException {
