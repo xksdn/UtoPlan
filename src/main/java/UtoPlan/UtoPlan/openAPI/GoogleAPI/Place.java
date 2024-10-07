@@ -16,5 +16,7 @@ public class Place {
     private double lat;
     private double lng;
     private String address;
+    private String image;
     private double rating;
+    private String phone;
 }
