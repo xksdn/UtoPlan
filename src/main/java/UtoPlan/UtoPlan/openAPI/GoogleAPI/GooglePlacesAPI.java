@@ -16,13 +16,13 @@ import java.util.List;
 @Service
 public class GooglePlacesAPI {
 
-    // AIzaSyDYNzaR_G6Yt5lrUguHzorMjPenHbHj6qM
-    private final String GoogleAPIKey = "";
+    // AIzaSyA2c2TPzPS8qDDZsBTpCxS7wlT77dWT5F8
+    private final String GoogleAPIKey = "AIzaSyA2c2TPzPS8qDDZsBTpCxS7wlT77dWT5F8";
 
 
     public List<Place> searchPlaces(TripEntity tripEntity) throws JsonProcessingException {
         // 여행 장소 및 스타일을 조합하여 검색 쿼리 작성
-        String placeName = tripEntity.getTripPlace(); // 여행 장소
+        String placeName = tripEntity.getTripCity(); // 여행 장소
         String resultQuery = tripEntity.getTripStyle(); // 여행 스타일
         String query = String.format("%s %s", placeName, resultQuery);
 

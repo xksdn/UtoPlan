@@ -8,29 +8,30 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.catalina.User;
 
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-@Entity(name = "trip")
-public class TripEntity {
+@Entity(name = "plan")
+public class PlanEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tripId;
+    private Long id;
+    private String day;
+    private LocalDate date;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "num")
+    @JoinColumn(name = "user_id")
     private UserEntity user;
-    private String tripName;
-    private String tripPlace;
-    private String tripCity;
-    private Integer adult;
-    private Integer kid;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private String tripStyle;
+
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlaceEntity> places;
+
 }

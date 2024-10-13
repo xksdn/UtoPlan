@@ -49,7 +49,7 @@ public class AuthController {
         if (isAuthenticated) {
             // 로그인 성공 시 JWT 토큰 생성
             Long num = userService.getUserNumByEmail(email);
-            String token = jwtUtil.generateToken(String.valueOf(num)); // num을 String으로 변환
+            String token = jwtUtil.generateToken(num); // num을 String으로 변환
 
             response.setSuccess(true);
             response.setMessage("로그인 성공");
