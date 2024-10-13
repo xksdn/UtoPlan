@@ -88,10 +88,19 @@ public class TripPlanApiController {
 
     @PostMapping("/plan-save")
     public ResponseEntity<String> savePlan(
+            @RequestHeader("Authorization") String token,
             @RequestBody List<PlanEntity> plans
-    ){
-        planService.savePlanWithPlaces(plans);
-        return ResponseEntity.ok("Plans saved successfully");
+    ) {
+        // JWT 토큰에서 사용자 num 값을 추출
+        Long userNum;
+        try {
+            userNum = jwtUtil.extractUserId(token);
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid JWT Token", e);
+        }
 
+        // 추출된 userNum을 PlanService에 전달하여 계획과 장소를 저장
+        planService.savePlanWithPlaces(plans, userNum);
+        return ResponseEntity.ok("Plans saved successfully");
     }
 }
