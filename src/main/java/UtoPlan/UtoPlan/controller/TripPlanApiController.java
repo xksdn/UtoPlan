@@ -1,6 +1,7 @@
 package UtoPlan.UtoPlan.controller;
 
 import UtoPlan.UtoPlan.CORS.JwtUtil;
+import UtoPlan.UtoPlan.DB.Repository.UserRepository;
 import UtoPlan.UtoPlan.DB.Entity.PlanEntity;
 import UtoPlan.UtoPlan.DB.Entity.TripEntity;
 import UtoPlan.UtoPlan.DB.Entity.UserEntity;
@@ -10,8 +11,10 @@ import UtoPlan.UtoPlan.openAPI.GoogleAPI.DayPlan;
 import UtoPlan.UtoPlan.openAPI.GoogleAPI.GooglePlacesAPI;
 import UtoPlan.UtoPlan.openAPI.GoogleAPI.TripPlanLogic;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,14 +32,32 @@ public class TripPlanApiController {
     private final PlanService planService;
     private final JwtUtil jwtUtil;
 
+    @Autowired
+    private UserRepository userRepository;
+
+//    @PostMapping("/save")
+//    public ResponseEntity<String> saveTrip(
+//            @RequestBody TripEntity tripEntity
+//            ) {
+//        log.info("Received Inquiry: {}", tripEntity);
+//        tripRepository.save(tripEntity);
+//        return ResponseEntity.ok("Trip data saved successfully");
+//    }
+
     @PostMapping("/save")
-    public ResponseEntity<String> saveTrip(
-            @RequestBody TripEntity tripEntity
-            ) {
-        log.info("Received Inquiry: {}", tripEntity);
+    public ResponseEntity<?> saveTrip(@RequestBody TripEntity tripEntity, HttpServletRequest request) {
+        // JWT에서 user_id 추출
+        String token = request.getHeader("Authorization").substring("Basic ".length()).trim();
+        Long userId = jwtUtil.extractUserId(token); // userId 추출 방법에 따라 수정
+
+        // user_id를 tripEntity에 설정
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        tripEntity.setUser(user); // user 객체를 tripEntity에 설정
+
         tripRepository.save(tripEntity);
-        return ResponseEntity.ok("Trip data saved successfully");
+        return ResponseEntity.ok("Trip saved successfully");
     }
+
 
 
     @PostMapping("/response")
