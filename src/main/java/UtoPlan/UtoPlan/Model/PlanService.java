@@ -27,8 +27,9 @@ public class PlanService {
             UserEntity user = UserEntity.builder().num(userId).build();
             plan.setUser(user);
 
+            // 날짜 설정 (사용자가 제공한 날짜 사용)
             if (plan.getDate() == null) {
-                plan.setDate(LocalDate.now());  // 만약 date가 누락되었다면 기본값으로 현재 날짜 설정
+                throw new IllegalArgumentException("PlanEntity에 날짜가 설정되지 않았습니다. 날짜 값은 필수입니다.");
             }
 
             // 장소 리스트와 PlanEntity 연관 설정

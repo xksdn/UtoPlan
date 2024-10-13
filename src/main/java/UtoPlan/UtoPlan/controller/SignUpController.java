@@ -14,11 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = {"http://localhost:3000", "https://project-elfsyyodnvfuotllaw4b.framercanvas.com"}) // CORS 설정
+@CrossOrigin(origins = {"http://localhost:3000", "https://project-elfsyyodnvfuotllaw4b.framercanvas.com", "https://utoplan.framer.website/"}) // CORS 설정
 @RestController
 @RequestMapping("/api")
 public class SignUpController {
-
     @Autowired
     private JavaMailSender mailSender;
 
