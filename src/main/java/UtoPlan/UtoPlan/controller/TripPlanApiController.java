@@ -87,7 +87,9 @@ public class TripPlanApiController {
         }
 
         // 여러 여행 계획이 있을 경우 가장 최근의 계획을 가져오는 방법 (예시: 0번째 계획 가져오기)
-        TripEntity tripEntity = tripEntities.get(0);
+//        TripEntity tripEntity = tripEntities.get(0);
+        // 가장 마지막 계획을 가져오기
+        TripEntity tripEntity = tripEntities.get(tripEntities.size() - 1);
 
         log.info("Retrieved tripEntity for user {}: {}", user.getNum(), tripEntity);
         // 여행 계획을 기반으로 로직 처리

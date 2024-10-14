@@ -19,4 +19,5 @@ public class Place {
     private String image;
     private double rating;
     private String phone;
+    private String timeSlot;
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,26 +24,41 @@ public class GooglePlacesAPI {
     public List<Place> searchPlaces(TripEntity tripEntity) throws JsonProcessingException {
         // 여행 장소 및 스타일을 조합하여 검색 쿼리 작성
         String placeName = tripEntity.getTripCity(); // 여행 장소
-        String resultQuery = tripEntity.getTripStyle(); // 여행 스타일
-        String query = String.format("%s %s", placeName, resultQuery);
+        String tripStyles = tripEntity.getTripStyle(); // 여행 스타일
 
-        double[] latLng = getLatLngFromLocationName(placeName);
-        double lat = latLng[0];
-        double lng = latLng[1];
-        int radius = 10000; // 10km 반경
+        String[] styles = tripStyles.split(",");
+        List<Place> allPlaces = new ArrayList<>();
 
-        String apiurl = String.format(
-                "https://maps.googleapis.com/maps/api/place/textsearch/json?query=%s&location=%f,%f&radius=%d&key=%s",
-                query, lat, lng, radius, GoogleAPIKey
-        );
+        for (String style : styles) {
+            String query = String.format("%s %s", placeName, style.trim());
 
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity(apiurl, String.class);
+            double[] latLng = getLatLngFromLocationName(placeName);
+            double lat = latLng[0];
+            double lng = latLng[1];
+            int radius = 10000; // 10km 반경
 
-        List<Place> places = parsePlaces(response.getBody());
+            String apiurl = String.format(
+                    "https://maps.googleapis.com/maps/api/place/textsearch/json?query=%s&location=%f,%f&radius=%d&key=%s&language=ko",
+                    query, lat, lng, radius, GoogleAPIKey
+            );
 
-        return places;
+            log.info("Calling Google Places API with URL: {}", apiurl);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.getForEntity(apiurl, String.class);
+
+            List<Place> places = parsePlaces(response.getBody());
+            log.info("Places found for style '{}': {}", style, places.size());
+            allPlaces.addAll(places); // 모든 검색 결과를 통합
+        }
+
+        log.info("Total number of places found: {}", allPlaces.size());
+        return allPlaces;
     }
+
+
+
+
 
 
 
@@ -98,6 +114,9 @@ public class GooglePlacesAPI {
             String placeId = result.path("place_id").asText();
             String phoneNumber = getPhoneNumberFromPlaceId(placeId);
 
+            JsonNode typesNode = result.path("types");
+            String timeSlot = determineTimeSlot(typesNode);
+
             // 장소 객체를 생성하여 리스트에 추가
             Place place = Place.builder()
                     .name(result.path("name").asText())
@@ -107,12 +126,32 @@ public class GooglePlacesAPI {
                     .rating(result.has("rating") ? result.path("rating").asDouble() : 0.0) // rating 정보가 없을 때 기본 값 처리
                     .image(imageUrl)
                     .phone(phoneNumber)
+                    .timeSlot(timeSlot)
                     .build();
 
             // 사진이 있는 장소만 리스트에 추가
+            log.info("Parsed place: {}", place);
             places.add(place);
         }
+        log.info("Total places parsed: {}", places.size());
         return places;
+    }
+
+    // 유형 정보를 바탕으로 시간대 결정
+    private String determineTimeSlot(JsonNode typesNode) {
+        if (typesNode.isArray()) {
+            for (JsonNode type : typesNode) {
+                String typeValue = type.asText().toLowerCase();
+                if (typeValue.contains("park") || typeValue.contains("family")) {
+                    return "morning";
+                } else if (typeValue.contains("museum") || typeValue.contains("tourist")) {
+                    return "afternoon";
+                } else if (typeValue.contains("restaurant") || typeValue.contains("night")) {
+                    return "evening";
+                }
+            }
+        }
+        return "afternoon"; // 기본값
     }
 
     // placeId를 이용하여 전화번호를 가져오는 메서드 추가
