@@ -40,8 +40,16 @@ public class PlanService {
                         throw new IllegalArgumentException("PlaceEntity 필수 필드 누락");
                     }
 
+                    // imageUrl 필드가 있는지 확인
+                    if (place.getImageUrl() == null || place.getImageUrl().isEmpty()) {
+                        throw new IllegalArgumentException("PlaceEntity의 imageUrl이 누락되었습니다.");
+                    }
+
+                    log.info("Saving Place: {}", place);
+
                     // 계획과 장소 연결
                     place.setPlan(plan);
+                    log.info("Setting PlaceEntity with imageUrl: {}", place.getImageUrl());
                 }
             } else {
                 log.warn("No places found for this plan.");
@@ -50,13 +58,9 @@ public class PlanService {
             // 계획 저장 (장소와 연관된 상태로)
             PlanEntity savedPlan = planRepository.save(plan);
 
-            // 장소 저장
-            if (plan.getPlaces() != null && !plan.getPlaces().isEmpty()) {
-                for (PlaceEntity place : plan.getPlaces()) {
-                    place.setPlan(savedPlan);  // 저장된 plan을 다시 설정하여 외래 키 연결 보장
-                    placeRepository.save(place);
-                }
-            }
+            // 장소가 이미 연관된 상태에서 저장하므로 별도로 저장하지 않아도 됨
+            log.info("Plan and associated places saved successfully.");
         }
     }
+
 }
