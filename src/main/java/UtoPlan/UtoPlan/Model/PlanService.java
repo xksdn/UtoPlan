@@ -8,9 +8,12 @@ import UtoPlan.UtoPlan.DB.Repository.PlanRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -62,5 +65,28 @@ public class PlanService {
             log.info("Plan and associated places saved successfully.");
         }
     }
+
+
+    // 사용자 ID에 따른 계획 리스트 가져오기
+    //트랜잭션 확장
+    @Transactional
+    public List<PlanDTO> getPlansByUserId(Long userId) {
+        List<PlanEntity> plans = planRepository.findByUser_Num(userId);
+
+        // Null 체크
+        if (plans == null || plans.isEmpty()) {
+            log.warn("No plans found for userId: {}", userId);
+            return Collections.emptyList();
+        }
+
+        return plans.stream().map(plan -> {
+            List<PlaceDTO> places = plan.getPlaces().stream()
+                    .map(place -> new PlaceDTO(place.getId(), place.getName(), place.getLatitude(), place.getLongitude(), place.getImageUrl()))
+                    .collect(Collectors.toList());
+            return new PlanDTO(plan.getId(), plan.getDay(), plan.getDate(), places);
+        }).collect(Collectors.toList());
+    }
+
+
 
 }

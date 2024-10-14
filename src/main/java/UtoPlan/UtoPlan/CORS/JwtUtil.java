@@ -29,6 +29,7 @@ public class JwtUtil {
     // JWT 토큰 생성
     public String generateToken(Long num) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("num", num); // "num" 값을 claims에 추가
         return createToken(claims, String.valueOf(num));
     }
 
@@ -63,6 +64,32 @@ public class JwtUtil {
             throw new IllegalArgumentException("JWT 토큰 형식이 잘못되었습니다. 올바른 JWT 형식이어야 합니다.", e);
         }
     }
+
+    public Long extractNumFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY) // 비밀키 설정
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        // "num" 값이 있는지 확인
+        Object num = claims.get("num");
+
+        if (num == null) {
+            throw new IllegalArgumentException("토큰에 'num' 값이 없습니다.");
+        }
+
+        // 타입에 따른 처리
+        if (num instanceof Integer) {
+            return ((Integer) num).longValue(); // Integer인 경우 Long으로 변환
+        } else if (num instanceof Long) {
+            return (Long) num; // Long인 경우 바로 반환
+        } else {
+            throw new IllegalArgumentException("'num' 값의 타입이 잘못되었습니다: " + num.getClass().getName());
+        }
+    }
+
+
 
 
     private Claims extractAllClaims(String token) {

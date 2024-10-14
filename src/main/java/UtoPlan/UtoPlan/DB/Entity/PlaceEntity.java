@@ -23,8 +23,9 @@ public class PlaceEntity {
     private String name;
     private double latitude;
     private double longitude;
+
     @JsonProperty("imageUrl")
-    @Column(name = "image_url")
+    @Column(name = "image_url", length = 500) // 또는 columnDefinition = "TEXT"
     private String imageUrl;
 
     @ManyToOne
