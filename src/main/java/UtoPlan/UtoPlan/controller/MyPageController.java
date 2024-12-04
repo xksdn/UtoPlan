@@ -1,6 +1,7 @@
 package UtoPlan.UtoPlan.controller;
 
 import UtoPlan.UtoPlan.CORS.JwtUtil;
+import UtoPlan.UtoPlan.DB.Entity.TripEntity;
 import UtoPlan.UtoPlan.Model.PlanDTO;
 import UtoPlan.UtoPlan.Model.PlanService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +36,6 @@ public class MyPageController {
 
     @PostMapping("/my-page")
     public ResponseEntity<?> getPlansByUserId(HttpServletRequest request) {
-
         // Authorization 헤더에서 "Bearer "를 제거하고 토큰 추출
         String authorizationHeader = request.getHeader("Authorization");
 
@@ -59,9 +60,37 @@ public class MyPageController {
 
         // 사용자의 플랜 데이터를 서비스에서 가져옴
         List<PlanDTO> plans = planService.getPlansByUserId(userNum);
+        Map<String, Double> midpoint = planService.calculateMidpoint(plans); // 위도와 경도 계산
+
+        // TripEntity 정보를 가져와서 필요한 값 추출
+        TripEntity tripEntity = planService.getTripEntityByUserId(userNum); // 이 메서드는 사용자 ID로 TripEntity를 찾아오는 메서드여야 합니다.
+
+        if (tripEntity == null) {
+            // TripEntity가 null이면 로그로 남기고 응답 데이터에 포함하지 않음
+            log.error("TripEntity not found for user ID: {}", userNum);
+        }
+
+        // URL 생성: 위도와 경도를 포함하여 날짜와 성인 수를 포함
+        String hotelUrl = String.format(
+                "https://kr.hotels.com/Hotel-Search?latLong=%f,%f&startDate=%s&endDate=%s&adults=%d&rooms=1&sort=RECOMMENDED",
+                midpoint.get("latitude"),
+                midpoint.get("longitude"),
+                tripEntity != null ? tripEntity.getStartDate() : LocalDate.now(), // tripEntity가 null이면 기본값 사용
+                tripEntity != null ? tripEntity.getEndDate() : LocalDate.now(),   // tripEntity가 null이면 기본값 사용
+                tripEntity != null ? tripEntity.getAdult() : 1                    // tripEntity가 null이면 기본값 1 사용
+        );
+
+        // 응답 데이터 준비
+        Map<String, Object> response = new HashMap<>();
+        response.put("plans", plans);
+        response.put("urls", Map.of(
+                "flightUrl", "https://www.example.com/flight-booking", // 임시 URL
+                "hotelUrl", hotelUrl // 동적으로 생성된 호텔 URL
+        ));
 
         System.out.println("마이페이지 데이터 전송 성공");
-        return ResponseEntity.ok(plans);
+        return ResponseEntity.ok(response);
     }
+
 
 }

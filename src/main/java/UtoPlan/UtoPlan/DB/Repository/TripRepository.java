@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface TripRepository extends JpaRepository<TripEntity, Long> {
     List<TripEntity> findByUser(UserEntity user);
+    TripEntity findByUserNum(Long userNum);
 }
