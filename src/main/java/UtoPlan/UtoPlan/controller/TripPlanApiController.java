@@ -44,18 +44,37 @@ public class TripPlanApiController {
 //        return ResponseEntity.ok("Trip data saved successfully");
 //    }
 
+//    @PostMapping("/save")
+//    public ResponseEntity<?> saveTrip(@RequestBody TripEntity tripEntity, HttpServletRequest request) {
+//        // JWT에서 user_id 추출
+//        String token = request.getHeader("Authorization").substring("Basic ".length()).trim();
+//        Long userId = jwtUtil.extractUserId(token); // userId 추출 방법에 따라 수정
+//
+//        // user_id를 tripEntity에 설정
+//        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+//        tripEntity.setUser(user); // user 객체를 tripEntity에 설정
+//
+//        tripRepository.save(tripEntity);
+//        return ResponseEntity.ok("Trip saved successfully");
+//    }
+
     @PostMapping("/save")
     public ResponseEntity<?> saveTrip(@RequestBody TripEntity tripEntity, HttpServletRequest request) {
-        // JWT에서 user_id 추출
-        String token = request.getHeader("Authorization").substring("Basic ".length()).trim();
-        Long userId = jwtUtil.extractUserId(token); // userId 추출 방법에 따라 수정
+        try {
+            // JWT에서 user_id 추출
+            String token = request.getHeader("Authorization").substring("Basic ".length()).trim();
+            Long userId = jwtUtil.extractUserId(token); // userId 추출 방법에 따라 수정
 
-        // user_id를 tripEntity에 설정
-        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        tripEntity.setUser(user); // user 객체를 tripEntity에 설정
+            // user_id를 tripEntity에 설정
+            UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+            tripEntity.setUser(user); // user 객체를 tripEntity에 설정
 
-        tripRepository.save(tripEntity);
-        return ResponseEntity.ok("Trip saved successfully");
+            tripRepository.save(tripEntity);
+            return ResponseEntity.ok("Trip saved successfully");
+        }catch (Exception e) {
+            log.error("Error processing the inquiry: {}", e.getMessage());
+            return ResponseEntity.status(500).body("Error processing the inquiry");
+        }
     }
 
 
