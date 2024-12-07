@@ -95,35 +95,42 @@ public class AmadeusService {
         String accessToken = getAccessToken(); // 토큰 가져오기
         String url = "https://test.api.amadeus.com/v1/reference-data/locations/airports";
 
+        // 파라미터 구성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("latitude", latitude)
-                .queryParam("longitude", longitude)
-                .queryParam("radius", radius)
-                .queryParam("page[limit]", 1) // 가장 가까운 공항 1개만 가져오기
-                .queryParam("sort", "relevance"); // 옵션 distance, relevance
+                .queryParam("latitude", latitude) // 위도
+                .queryParam("longitude", longitude); // 경도
 
+        // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<Map> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, Map.class);
+        try {
+            // Amadeus API 호출
+            ResponseEntity<Map> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, Map.class);
 
-        // 응답 상태 코드 확인 및 처리
-        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            List<Map<String, Object>> data = (List<Map<String, Object>>) response.getBody().get("data");
-            if (data != null && !data.isEmpty()) {
-                return (String) data.get(0).get("iataCode"); // 가장 가까운 공항의 IATA 코드 반환
+            // 응답 상태 코드 확인 및 처리
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                List<Map<String, Object>> data = (List<Map<String, Object>>) response.getBody().get("data");
+                if (data != null && !data.isEmpty()) {
+                    return (String) data.get(0).get("iataCode"); // 가장 가까운 공항의 IATA 코드 반환
+                } else {
+                    throw new RuntimeException("No airports found in the specified radius");
+                }
             } else {
-                throw new RuntimeException("No airports found in the specified radius");
+                System.err.println("Failed to fetch airport data from Amadeus API: " + response.getStatusCode() + ", " + response.getBody());
+                throw new RuntimeException("Failed to fetch airport data from Amadeus API");
             }
+        } catch (Exception e) {
+            System.err.println("Error occurred while fetching airport data: " + e.getMessage());
+            throw new RuntimeException("Error occurred while fetching airport data", e);
         }
-
-        // 실패 시 예외 처리
-        System.err.println("Failed to fetch airport data from Amadeus API: " + response.getStatusCode() + ", " + response.getBody());
-        throw new RuntimeException("Failed to fetch airport data from Amadeus API");
     }
+
+
+
 
 }
 

@@ -32,9 +32,12 @@ public class PlanService {
 
     // 사용자 ID로 TripEntity 찾기
     public TripEntity getTripEntityByUserId(Long userNum) {
-        // TripRepository에서 사용자 ID로 TripEntity를 찾음
-        return tripRepository.findByUserNum(userNum);
+        return tripRepository.findByUserNum(userNum)
+                .orElse(null);  // 결과가 없으면 null 반환
     }
+
+
+
 
     public void savePlanWithPlaces(List<PlanEntity> plans, Long userId) {
         for (PlanEntity plan : plans) {

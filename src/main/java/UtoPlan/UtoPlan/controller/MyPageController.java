@@ -66,6 +66,10 @@ public class MyPageController {
         List<PlanDTO> plans = planService.getPlansByUserId(userNum);
         Map<String, Double> midpoint = planService.calculateMidpoint(plans); // 위도와 경도 계산
 
+        Map<String, LocalDate> dates = planService.findEarliestAndLatestDates(plans); // 출발, 도착 계산
+        LocalDate earliestDate = dates.get("earliestDate");
+        LocalDate latestDate = dates.get("latestDate");
+
         // TripEntity 정보를 가져와서 필요한 값 추출
         TripEntity tripEntity = planService.getTripEntityByUserId(userNum); // 사용자 ID로 TripEntity를 찾아오는 메서드
 
@@ -73,14 +77,13 @@ public class MyPageController {
             // TripEntity가 null이면 로그로 남기고 응답 데이터에 포함하지 않음
             log.error("TripEntity not found for user ID: {}", userNum);
         }
-
         // 호텔 URL 생성
         String hotelUrl = String.format(
                 "https://kr.hotels.com/Hotel-Search?latLong=%f,%f&startDate=%s&endDate=%s&adults=%d&rooms=1&sort=RECOMMENDED",
                 midpoint.get("latitude"),
                 midpoint.get("longitude"),
-                tripEntity != null ? tripEntity.getStartDate() : LocalDate.now(), // tripEntity가 null이면 기본값 사용
-                tripEntity != null ? tripEntity.getEndDate() : LocalDate.now(),   // tripEntity가 null이면 기본값 사용
+                earliestDate != null ? earliestDate : LocalDate.now(), // earliestDate가 null이면 기본값 사용
+                latestDate != null ? latestDate : LocalDate.now(),   // latestDate가 null이면 기본값 사용
                 tripEntity != null ? tripEntity.getAdult() : 1                    // tripEntity가 null이면 기본값 1 사용
         );
 
@@ -101,8 +104,8 @@ public class MyPageController {
         String skyscannerUrl = String.format(
                 "https://www.skyscanner.co.kr/transport/flights/icn/%s/%s/%s/?adultsv2=%d&cabinclass=economy&childrenv2=&ref=home&rtn=1&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false",
                 destinationAirportCode,
-                tripEntity != null ? tripEntity.getStartDate().format(DateTimeFormatter.ofPattern("yyMMdd")) : LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd")), // 출발일
-                tripEntity != null ? tripEntity.getEndDate().format(DateTimeFormatter.ofPattern("yyMMdd")) : LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("yyMMdd")), // 도착일
+                earliestDate != null ? earliestDate.format(DateTimeFormatter.ofPattern("yyMMdd")) : LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd")), // 출발일
+                latestDate != null ? latestDate.format(DateTimeFormatter.ofPattern("yyMMdd")) : LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("yyMMdd")), // 도착일
                 tripEntity != null ? tripEntity.getAdult() : 1 // 성인 좌석 수
         );
 
