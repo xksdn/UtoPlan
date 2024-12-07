@@ -2,6 +2,7 @@ package UtoPlan.UtoPlan.controller;
 
 import UtoPlan.UtoPlan.CORS.JwtUtil;
 import UtoPlan.UtoPlan.DB.Entity.TripEntity;
+import UtoPlan.UtoPlan.Model.AmadeusService;
 import UtoPlan.UtoPlan.Model.PlanDTO;
 import UtoPlan.UtoPlan.Model.PlanService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -27,11 +29,13 @@ public class MyPageController {
     private JwtUtil jwtUtil;
 
     private final PlanService planService;
+    private final AmadeusService amadeusService;
 
     //필드 주입은 테스트하기가 어려워지고, 의존성 설정이 완료되기 전까지 객체가 완전히 초기화되지 않기 때문에 권장되지 않다
     // 생성자 주입 방식
-    public MyPageController(PlanService planService) {
+    public MyPageController(PlanService planService, AmadeusService amadeusService) {
         this.planService = planService;
+        this.amadeusService = amadeusService;
     }
 
     @PostMapping("/my-page")
@@ -63,14 +67,14 @@ public class MyPageController {
         Map<String, Double> midpoint = planService.calculateMidpoint(plans); // 위도와 경도 계산
 
         // TripEntity 정보를 가져와서 필요한 값 추출
-        TripEntity tripEntity = planService.getTripEntityByUserId(userNum); // 이 메서드는 사용자 ID로 TripEntity를 찾아오는 메서드여야 합니다.
+        TripEntity tripEntity = planService.getTripEntityByUserId(userNum); // 사용자 ID로 TripEntity를 찾아오는 메서드
 
         if (tripEntity == null) {
             // TripEntity가 null이면 로그로 남기고 응답 데이터에 포함하지 않음
             log.error("TripEntity not found for user ID: {}", userNum);
         }
 
-        // URL 생성: 위도와 경도를 포함하여 날짜와 성인 수를 포함
+        // 호텔 URL 생성
         String hotelUrl = String.format(
                 "https://kr.hotels.com/Hotel-Search?latLong=%f,%f&startDate=%s&endDate=%s&adults=%d&rooms=1&sort=RECOMMENDED",
                 midpoint.get("latitude"),
@@ -80,17 +84,40 @@ public class MyPageController {
                 tripEntity != null ? tripEntity.getAdult() : 1                    // tripEntity가 null이면 기본값 1 사용
         );
 
+        String destinationAirportCode;
+        try {
+            // Amadeus API를 사용하여 가까운 공항의 IATA 코드 가져오기
+            destinationAirportCode = amadeusService.searchNearestAirport(
+                    midpoint.get("latitude"),
+                    midpoint.get("longitude"),
+                    100 // 반경 100km 설정 (필요에 따라 조정 가능)
+            );
+        } catch (Exception e) {
+            destinationAirportCode = "hnd"; // API 실패 시 기본값
+            System.err.println("Failed to fetch nearest airport: " + e.getMessage());
+        }
+
+        // Skyscanner URL 생성
+        String skyscannerUrl = String.format(
+                "https://www.skyscanner.co.kr/transport/flights/icn/%s/%s/%s/?adultsv2=%d&cabinclass=economy&childrenv2=&ref=home&rtn=1&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false",
+                destinationAirportCode,
+                tripEntity != null ? tripEntity.getStartDate().format(DateTimeFormatter.ofPattern("yyMMdd")) : LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd")), // 출발일
+                tripEntity != null ? tripEntity.getEndDate().format(DateTimeFormatter.ofPattern("yyMMdd")) : LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("yyMMdd")), // 도착일
+                tripEntity != null ? tripEntity.getAdult() : 1 // 성인 좌석 수
+        );
+
         // 응답 데이터 준비
         Map<String, Object> response = new HashMap<>();
         response.put("plans", plans);
         response.put("urls", Map.of(
-                "flightUrl", "https://www.example.com/flight-booking", // 임시 URL
+                "flightUrl", skyscannerUrl, // 동적으로 생성된 항공 URL
                 "hotelUrl", hotelUrl // 동적으로 생성된 호텔 URL
         ));
 
         System.out.println("마이페이지 데이터 전송 성공");
         return ResponseEntity.ok(response);
     }
+
 
 
 }
